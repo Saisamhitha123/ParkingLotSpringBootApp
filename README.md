@@ -25,7 +25,7 @@ The ParkingLot Management System is a RESTful API built with Spring Boot that pr
 - **Observer Pattern**: Updating Display Panels whenever parking spots, parking floors count/status changes and also updating entry/exit display panels with spot and fee accordingly
 - **Strategy Pattern**: Different allocation and fee calculation strategies( used PERCENTAGE allocation strategy)
 - **Decorator Pattern**: Fee calculation with different fee types (SurgeFeeCalculator, BaseFeeCalculator)
-- **Builder Pattern**: Data transfer objects for API responses
+- **Builder Pattern**: creating objects
 
 ### Technology Stack
 - **Framework**: Spring Boot 3.x
