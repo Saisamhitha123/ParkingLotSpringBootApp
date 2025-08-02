@@ -1,0 +1,124 @@
+@startuml ParkingLot Database Schema
+
+!define TABLE_COLOR #E1F5FE
+!define PK_COLOR #FFE0B2
+!define FK_COLOR #C8E6C9
+
+skinparam linetype ortho
+
+' Tables
+entity "parking_lot" as parking_lot <<TABLE_COLOR>> {
+    + parking_lot_id : BIGINT <<PK_COLOR>>
+}
+
+entity "parking_floor" as parking_floor <<TABLE_COLOR>> {
+    + floor_id : BIGINT <<PK_COLOR>>
+    --
+    status : VARCHAR(20)
+    is_under_maintenance : VARCHAR(5)
+    parking_lot_id : BIGINT <<FK_COLOR>>
+}
+
+entity "parking_spot" as parking_spot <<TABLE_COLOR>> {
+    + spot_id : BIGINT <<PK_COLOR>>
+    --
+    spot_type : VARCHAR(10)
+    status : VARCHAR(20)
+    is_under_maintenance : VARCHAR(5)
+    floor_id : BIGINT <<FK_COLOR>>
+}
+
+entity "vehicle" as vehicle <<TABLE_COLOR>> {
+    + vehicle_number : VARCHAR(255) <<PK_COLOR>>
+    --
+    vehicle_type : VARCHAR(20)
+}
+
+entity "parking_ticket" as parking_ticket <<TABLE_COLOR>> {
+    + ticket_id : BIGINT <<PK_COLOR>>
+    --
+    entry_time : BIGINT
+    amount_charged : DECIMAL(10,2)
+    vehicle_number : VARCHAR(255) <<FK_COLOR>>
+}
+
+entity "entry_way_panel" as entry_panel <<TABLE_COLOR>> {
+    + entry_panel_id : BIGINT <<PK_COLOR>>
+    --
+    name : VARCHAR(255)
+    strategy_type : VARCHAR(20)
+    parking_lot_id : BIGINT <<FK_COLOR>>
+}
+
+entity "exit_way_panel" as exit_panel <<TABLE_COLOR>> {
+    + exit_panel_id : BIGINT <<PK_COLOR>>
+    --
+    name : VARCHAR(255)
+    fee_type : VARCHAR(20)
+    parking_lot_id : BIGINT <<FK_COLOR>>
+}
+
+entity "display_panel" as display_panel <<TABLE_COLOR>> {
+    + panel_id : BIGINT <<PK_COLOR>>
+    --
+    message : VARCHAR(255)
+    name : VARCHAR(255)
+    parking_lot_id : BIGINT <<FK_COLOR>>
+    floor_id : BIGINT <<FK_COLOR>>
+    entry_panel_id : BIGINT <<FK_COLOR>>
+    exit_panel_id : BIGINT <<FK_COLOR>>
+}
+
+entity "vehicle_spot_map" as vehicle_spot_map <<TABLE_COLOR>> {
+    --
+    spot_id : BIGINT <<FK_COLOR>>
+    vehicle_number : VARCHAR(255) <<FK_COLOR>>
+    --
+    ' Join table for vehicle and spot 1:1
+}
+
+' Relationships
+parking_lot ||--o{ parking_floor : "1:N"
+parking_lot ||--o{ entry_panel : "1:N"
+parking_lot ||--o{ exit_panel : "1:N"
+parking_lot ||--o{ display_panel : "1:N"
+
+parking_floor ||--o{ parking_spot : "1:N"
+parking_floor }o--|| parking_lot : "N:1"
+parking_floor ||--o{ display_panel : "1:N"
+
+parking_spot }o--|| parking_floor : "N:1"
+parking_spot ||--|| vehicle_spot_map : "1:1"
+
+vehicle ||--|| vehicle_spot_map : "1:1"
+vehicle ||--o{ parking_ticket : "1:N"
+
+entry_panel }o--|| parking_lot : "N:1"
+exit_panel }o--|| parking_lot : "N:1"
+
+display_panel }o--|| parking_lot
+display_panel }o--|| parking_floor
+display_panel }o--|| entry_panel
+display_panel }o--|| exit_panel
+
+parking_ticket }o--|| vehicle
+
+' Notes
+note top of parking_lot : "Main parking lot entity"
+note top of parking_floor : "Floors within a parking lot"
+note top of parking_spot : "Individual parking spaces"
+note top of vehicle : "Vehicles using parking spots"
+note top of parking_ticket : "Tickets generated for vehicles"
+note top of entry_panel : "Entry gates with allocation strategy"
+note top of exit_panel : "Exit gates with fee calculation"
+note top of display_panel : "Information display panels"
+
+note bottom
+**Legend:**
+- PK = Primary Key
+- FK = Foreign Key
+- VARCHAR(5): Boolean stored as string ("true"/"false")
+- DECIMAL: Money format
+end note
+
+@enduml
