@@ -75,7 +75,7 @@ spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
 
 
-### Class Diagram/Schema diagram
+### Class Diagram
 
 ![Low Level Design Diagram.png](Low%20Level%20Design%20Diagram.png)
 
